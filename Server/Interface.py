@@ -1,9 +1,10 @@
-from concurrent import futures
-import logging
-import grpc
+import logging,grpc
 import Server.protocol as protocol
+from datetime import date
+from concurrent import futures
 from Server.protocs import match_pb2_grpc, match_pb2
-from Server.Persistent.DTOs import match
+from Server.Persistent import DBController
+from Server.NeuralNetwork import NeuralNetworkController
 
 class MatchSender(match_pb2_grpc.MatchSenderServicer):
     def getMatchInLastSeasons(self, request, context):
@@ -11,7 +12,7 @@ class MatchSender(match_pb2_grpc.MatchSenderServicer):
         for game in repo.main_table.select_by_league_name_last_seasons(league=request.league,as_dataframe=False):
             match = matchlist.list.add()
             match.league=game.league
-            match.date=game.date
+            match.date=game.date.toisoformat()
             match.round=game.round
             match.home_team_name=game.home_team_name
             match.away_team_name=game.away_team_name
@@ -38,11 +39,7 @@ class MatchSender(match_pb2_grpc.MatchSenderServicer):
 
     def getUpcomingGames(self, request, context):
         matchlist=match_pb2.MatchList()
-        upcoming=None
-        if request.league=='all':
-            upcoming= repo.upcoming_games.select_all(as_dataframe=False)
-        else:
-            upcoming=repo.upcoming_games.select_by_league_name(league=request.league,as_dataframe=False)
+        upcoming=DBController.getUpcomingGames(league=request.league)
         for game in upcoming :
             match = matchlist.list.add()
             match.league = game.league
@@ -74,11 +71,11 @@ class MatchSender(match_pb2_grpc.MatchSenderServicer):
     def setOddsforUpcominGames(self, request, context):
         matchlist = match_pb2.MatchList()
         for game in request.list:
-            repo.upcoming_games.update(protocol.responseToMatchDTO(game))
-        for game in repo.upcoming_games.select_all(as_dataframe=False):
+            DBController.updateUpcomingGameOdds(protocol.responseToMatchDTO(game))
+        for game in DBController.getUpcomingGames(league='all'):
             match = matchlist.list.add()
             match.league = game.league
-            match.date = game.date
+            match.date = date.fromisoformat(game.date)
             match.round = game.round
             match.home_team_name = game.home_team_name
             match.away_team_name = game.away_team_name
@@ -105,16 +102,32 @@ class MatchSender(match_pb2_grpc.MatchSenderServicer):
 
     def predict(self, request, context):
         print("Prediction in process")
-        #stub for prediction process
         predictions=match_pb2.PredictionList()
+        for dto in NeuralNetworkController.predict(league='all'):
+            _prediction=predictions.list.add()
+            _prediction.leauge=dto.league
+            _prediction.date=dto.date.isoformat()
+            _prediction.home_team_name=dto.home_team_name
+            _prediction.away_team_name=dto.away_team_name
+            _prediction.home_odds_nn=dto.home_odds_nn
+            _prediction.draw_odds_nn=dto.draw_odds_nn
+            _prediction.away_odds_nn=dto.away_odds_nn
+            _prediction.pred_1=dto.pred_1
+            _prediction.pred_2=dto.pred_2
+            _prediction.pred_x=dto.pred_x
+            _prediction.expected=dto.expected
+            _prediction.reslt=dto.result
         return predictions
 
     def dbfunctions(self, request, context):
         if request.command==match_pb2.dbCommand.Command.CLEAR:
            print('clear Database')
+           DBController.clearDB()
+           msg=match_pb2.strMsg(msg='Database has been cleared')
         elif request.command==match_pb2.dbCommand.Command.UPDATE:
             print('update Database')
-        msg=match_pb2.strMsg(msg='accept the command')
+            DBController.updateDB()
+            msg=match_pb2.strMsg(msg='Database has benn updated')
         return msg
 
 def serve():

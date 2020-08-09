@@ -33,3 +33,17 @@ class upcoming_match:
 class match(upcoming_match):
     result:str
 
+@dataclass
+class prediction:
+    league:str
+    date:datetime.datetime
+    home_team_name:str
+    away_team_name:str
+    home_odds_nn:float
+    draw_odds_nn:float
+    away_odds_nn:float
+    pred_1:float
+    pred_2:float
+    pred_x:float
+    expected:float
+    result:str

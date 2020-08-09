@@ -3,19 +3,20 @@ import pandas as pd
 import Server.NeuralNetwork.data_preproccesor as data_preprocessor
 from Server.NeuralNetwork.neuralnet import NueralNet
 from Server.Persistent import DBController
+from Server.Persistent.DTOs import prediction as Prediction
 
 AVG = 30
 EPOC = 30
 
 def predict(league):
     """
-    @param league: string that represent the league
-    @return: Pandas DataFrame of all the necessary information after the prediction
+    @param league: string that represent the league (can be 'all')
+    @return: list of predictions DTOs
     """
     predictions = []
     #region Data
-    all_data=DBController.getAllData()
-    upcoming_games=DBController.getUpcomingGames(league)
+    all_data=DBController.getAllData(as_dataframe=True)
+    upcoming_games=DBController.getUpcomingGames(league,as_dataframe=True)
     x,y = data_preprocessor.train_preprocess(all_data)
     to_predict = data_preprocessor.prediction_preprocess(upcoming_games)
     #endregion
@@ -42,13 +43,18 @@ def predict(league):
     details=details[['league','date','home_team_name','away_team_name','home_odds_nn','draw_odds_nn','away_odds_nn']]
     final = pd.concat([details,y_pred],axis=1,sort=False)
 
-    #slashDirection = "\\"
-    #if platform.system() == "Darwin":
-    #    slashDirection = "//"
-    #pathToSave = 'outputs{}predictions-Week-{}.csv'.format(slashDirection,_round)
-    #final.to_csv(pathToSave,index=False)
-    #endregion
-    return final
+    prediction_dtos=[]
+    for row in final.shape[0]:
+        prediction_dtos.append(Prediction(final.loc[row,'leauge'],final.loc[row,'date'],final.loc[row,'home_team_name'],
+                               final.loc[row,'away_team_name'],final.loc[row,'home_odds_nn'],final.loc[row,'draw_odds_nn'],
+                               final.loc[row,'away_odds_nn'],final.loc[row,'pred_1'],final.loc[row,'pred_2'],
+                               final.loc[row,'pred_x'],calc_exp(predictions=[final.loc[row,'pred_1'],
+                                                                             final.loc[row,'pred_x'],
+                                                                             final.loc[row,'pred_2']],
+                                                                odds=[final.loc[row,'home_odds_nn'],
+                                                                      final.loc[row,'draw_odds_nn'],
+                                                                      final.loc[row, 'away_odds_nn']]),final.loc[row,'result']))
+    return prediction_dtos
 
 def apply_indexes(y_pred, y_test):
     """
@@ -59,3 +65,13 @@ def apply_indexes(y_pred, y_test):
     indexes = list(y_test.index.values.tolist())
     y_pred_df = pd.DataFrame(data=y_pred, index=indexes, columns=['pred_1','pred_2','pred_X'])
     return y_pred_df,indexes
+
+def calc_exp(predictions,odds):
+    '''
+    @param predictions: array of 3 possibilities
+    @param odds: array of 3 odds
+    @return: expected value
+     '''
+    predictions=np.array(predictions)
+    maxElement=np.amax(predictions)
+    return odds[maxElement]*predictions[maxElement]
