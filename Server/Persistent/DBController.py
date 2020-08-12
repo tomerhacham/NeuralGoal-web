@@ -1,10 +1,16 @@
+from Server.Persistent.MongoDBConnection import MongoDBConnection
+
+DBConnection = MongoDBConnection()
+
+
 def getAllData(as_dataframe=False):
     #TODO:implement
     '''
     @param as_dataframe: boolean indicate if to return the data as Pandas DataFrame or list of DTOs
     @return: all the match in match table
     '''
-    return None
+    return DBConnection.DevDBGames.find()
+    #return mongoConnection.ProductionDBMainTable.find()
 
 def getUpcomingGames(league,as_dataframe=False):
     #TODO:implement
@@ -14,8 +20,11 @@ def getUpcomingGames(league,as_dataframe=False):
     @return: all the upcoming matches for the requested league
     '''
     if league=='all':
-        #TODO:return all matches
-    return None
+        getAllData()
+    myquery = { "league": league }
+
+    return DBConnection.DevDBGames.find(myquery)
+    #return mongoConnection.ProductionDBUpcomingGames.find(myquery)
 
 def updateUpcomingGameOdds(dto):
     #TODO: implement
@@ -34,3 +43,11 @@ def clearDB():
 def updateDB():
     #TODO: implement- scrap all the data
     return None
+
+
+
+
+allData = getAllData()
+
+for game in allData:
+  print(game)
