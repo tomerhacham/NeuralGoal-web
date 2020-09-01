@@ -17,3 +17,8 @@ class MongoDBConnection:
         self.DevDBGames = DevDBGames
         self.ProductionDBMainTable = ProductionDBMainTable
         self.ProductionDBUpcomingGames = ProductionDBUpcomingGames
+
+    def clearDB(self):
+        self.ProductionDBMainTable.remove({})
+        self.ProductionDBUpcomingGames.remove({})
+

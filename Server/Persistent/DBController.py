@@ -5,16 +5,17 @@ import pandas as pd
 DBConnection = MongoDBConnection()
 
 def getAllData(as_dataframe=False):
-    #TODO:implement dataframe return
     '''
     @param as_dataframe: boolean indicate if to return the data as Pandas DataFrame or list of DTOs
     @return: all the match in match table
     '''
+    if as_dataframe:
+        cursor=DBConnection.ProductionDBMainTable.find({},projection={'_id': False})
+        return pd.DataFrame.from_records(cursor)
     return DBConnection.ProductionDBMainTable.find({},projection={'_id': False})
 
 
 def getUpcomingGames(league,as_dataframe=False):
-    #TODO:implement dataframe return
     '''
     @param league: string of the requested league (can be 'all' in order for all leagues)
     @param as_dataframe:  boolean indicate if to return the data as Pandas DataFrame or list of DTOs
@@ -24,10 +25,13 @@ def getUpcomingGames(league,as_dataframe=False):
         getAllData()
     myquery = { "league": league }
 
+    if as_dataframe:
+        cursor=DBConnection.ProductionDBMainTable.find(myquery,projection={'_id': False})
+        return pd.DataFrame.from_records(cursor)
+
     return DBConnection.ProductionDBMainTable.find(myquery,projection={'_id': False})
 
 def updateUpcomingGameOdds(dto):
-    #TODO: implement dataframe return
     '''
     @param dto: dto of the upcoming game to be update (the dto will store the odds of the match)
     @return: Void
@@ -36,8 +40,7 @@ def updateUpcomingGameOdds(dto):
 
 
 def clearDB():
-    #TODO:implement-delete all data in the DB
-    return None
+    DBConnection.clearDB()
 
 
 def updateDB():
@@ -45,8 +48,8 @@ def updateDB():
     return None
 
 
-#allData = getAllData()
+#allData = getAllData(as_dataframe=True)
 #for game in allData:
- # print(game)
- # m=match(**game)
- # print(m)
+#  print(game)
+#  m=match(**game)
+#  print(m)
