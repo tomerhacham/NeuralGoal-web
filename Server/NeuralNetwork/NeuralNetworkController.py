@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import Server.NeuralNetwork.data_preproccesor as data_preprocessor
-from Server.NeuralNetwork.neuralnet import NueralNet
+from Server.NeuralNetwork.neuralnet import NeuralNet
 from Server.Persistent import DBController
 from Server.Persistent.DTOs import prediction as Prediction
 
@@ -22,7 +22,7 @@ def predict(league):
     #endregion
     #region ANN
     for i in range(0, AVG):
-        ann = NueralNet(x.shape[1])
+        ann = NeuralNet(x.shape[1])
         ann.train(x, y, EPOC)
         predictions.append(ann.predict(to_predict))
     #endregion

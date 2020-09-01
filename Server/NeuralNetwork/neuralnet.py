@@ -8,7 +8,7 @@ from Server.NeuralNetwork import batch_size_calc
 LOGGIN_NAME ="ann-{}".format((int)(time.time()))
 tensorboard = TensorBoard(log_dir='logs\\{}'.format(LOGGIN_NAME))
 
-class NueralNet():
+class NeuralNet ():
     model = None
     input=0
     output=0
