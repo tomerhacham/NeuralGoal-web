@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package match;
+
 //the service that will send single match
 service MatchSender {
   rpc getSingleMatch (MatchRequest) returns (Match) {}
