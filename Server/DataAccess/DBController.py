@@ -1,5 +1,5 @@
-from Server.Persistent.DTOs import match
-from Server.Persistent.MongoDBConnection import MongoDBConnection
+from Server.DataAccess.DTOs import match
+from Server.DataAccess.MongoDBConnection import MongoDBConnection
 import pandas as pd
 
 DBConnection = MongoDBConnection()

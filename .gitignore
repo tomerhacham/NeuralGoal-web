@@ -177,3 +177,6 @@ fabric.properties
 
 .idea/
 Server/__pycache__/
+/Server/protocs/package-lock.json
+/Server/protocs/test.js
+/Server/protocs/node_modules/

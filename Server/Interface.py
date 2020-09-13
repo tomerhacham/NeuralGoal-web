@@ -5,8 +5,8 @@ from datetime import date, datetime
 from concurrent import futures
 from dateutil.parser import parse
 #from Server.protocs import match_pb2_grpc, match_pb2
-from Server.Persistent.DTOs import match
-from Server.Persistent import DBController
+from Server.DataAccess.DTOs import match
+from Server.DataAccess import DBController
 from Server.NeuralNetwork import NeuralNetworkController
 
 match_pb2, match_pb2_grpc = protol.load('protocs/match.proto')

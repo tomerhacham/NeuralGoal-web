@@ -1,4 +1,4 @@
-from Server.Persistent.DTOs import match
+from Server.DataAccess.DTOs import match
 from datetime import date
 
 def responseToMatchDTO(response):

@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 import Server.NeuralNetwork.data_preproccesor as data_preprocessor
 from Server.NeuralNetwork.neuralnet import NeuralNet
-from Server.Persistent import DBController
-from Server.Persistent.DTOs import prediction as Prediction
+from Server.DataAccess import DBController
+from Server.DataAccess.DTOs import prediction as Prediction
 
 AVG = 30
 EPOC = 30
