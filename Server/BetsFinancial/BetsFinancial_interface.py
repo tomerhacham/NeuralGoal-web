@@ -1,25 +1,17 @@
 #Interface of the Bets and Financials module
+import Server.BetsFinancial.FundsController as FundsController
+import Server.BetsFinancial.MatchesController as MatchController
 
-def addMatch(league ,date ,home_team, away_team) :
+def addMatch(league ,date ,home_team, away_team,result=None) :
     '''
     @param league:string , the league that the match took place.
     @param date:datetime object, the date that the match took place.
     @param home_team:string, name of the home team.
     @param away_team:string, name of the way team.
-    @return Match object that represent the match
-    '''
-    return None
-
-def addMatch(league ,date ,home_team, away_team,result) :
-    '''
-    @param league:string , the league that the match took place.
-    @param date:datetime object, the date that the match took place.
-    @param home_team:string, name of the home team.
-    @param away_team:string, name of the way team.
-    @param result:string, the result of the match ('1','X','2')
+    @param result (OPTIONAL):string, the result of the match ('1','X','2')
     @return: Match object that represent the match
     '''
-    return None
+    return  MatchController.addMatch(league=league,date=date,home_team=home_team,away_team=away_team,result=result)
 
 def setMatchResult(matchID,result):
     '''
@@ -27,7 +19,7 @@ def setMatchResult(matchID,result):
     @param result:string, the result of the match ('1','X','2')
     @return: Match object that represent the match
     '''
-    return None
+    return MatchController.setMatchResult(matchID,result)
 
 def setSingleBet(receiptID, bet_value,bet_odd,matchID,result):
     '''
@@ -38,7 +30,7 @@ def setSingleBet(receiptID, bet_value,bet_odd,matchID,result):
     @param result:string, the outcome of the match we expect ('1','X','2')
     @return:None
     '''
-    return None
+    return MatchController.setSingleBet(receiptID, bet_value,bet_odd,matchID,result)
 
 def setDoubleBet(receiptID, bet_value,bet_odd,match1_ID,match2_ID,result_1,result_2):
     '''
@@ -51,7 +43,7 @@ def setDoubleBet(receiptID, bet_value,bet_odd,match1_ID,match2_ID,result_1,resul
     @param result_2:string, the outcome of the second match we expect ('1','X','2')
     @return:None
     '''
-    return None
+    return MatchController.setDoubleBet(receiptID, bet_value,bet_odd,match1_ID,match2_ID,result_1,result_2)
 
 def depositFunds(name,amount):
     '''
@@ -59,12 +51,12 @@ def depositFunds(name,amount):
     @param amount:float, how much money has been deposited
     @return:None
     '''
-    return None
+    return FundsController.depositFunds(name,amount)
 
 def withdraw(amount):
     '''
     @param amount:float, how much money has been deposited
     @return:None
     '''
-    return None
+    return FundsController.withdraw(amount)
 

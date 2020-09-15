@@ -48,9 +48,10 @@ def updateDB():
     return None
 
 def saveMatch(newMatch):
+    return None
+def updateMatch(match):
     #TODO: implement
     return None
-
 def findMatch(matchID):
     #TODO: implement
     return None
@@ -59,6 +60,29 @@ def saveBetForm(form):
     return None
 def findBetForm(receiptID):
     #TODO: implement
+    return None
+
+def getLastFundStatus():
+    '''
+    return the current status of the fund
+    @return:float
+    '''
+    return None
+def updateFundStatus(amount):
+    '''
+    save the current status of the fund
+    @param amount:float, the current status of the fund
+    @return:
+    '''
+    return None
+
+def saveTransaction(name, amount):
+    '''
+    save the deposit that has been made
+    @param name:string, who has been deposit the money
+    @param amount:flaot, the amount of money that has been deposited
+    @return:
+    '''
     return None
 
 #allData = getAllData(as_dataframe=True)

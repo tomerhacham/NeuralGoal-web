@@ -9,33 +9,21 @@ enumDICT = {
     'X':Result.Draw
 }
 
-def addMatch(league ,date ,home_team, away_team) :
+def addMatch(league ,date ,home_team, away_team,result=None) :
     '''
     @param league:string , the league that the match took place.
     @param date:datetime object, the date that the match took place.
     @param home_team:string, name of the home team.
     @param away_team:string, name of the way team.
-    @return Match object that represent the match
-    '''
-    matchID=generateMatchID()
-    newMatch = Match(matchID=matchID,league=league,date=date,home_team=home_team,away_team=away_team)
-    DBController.saveMatch(newMatch)
-    return None
-
-def addMatch(league ,date ,home_team, away_team,result) :
-    '''
-    @param league:string , the league that the match took place.
-    @param date:datetime object, the date that the match took place.
-    @param home_team:string, name of the home team.
-    @param away_team:string, name of the way team.
-    @param result:string, the result of the match ('1','X','2')
+    @param result (OPTIONAL):string, the result of the match ('1','X','2')
     @return: Match object that represent the match
     '''
     try:
         matchID=generateMatchID()
-        result=enumDICT[result]
-        newMatch = Match(matchID=matchID,league=league,date=date,home_team=home_team,away_team=away_team,result=result)
-        DBController.saveMatch(newMatch)
+        if result!=None:
+            _result=enumDICT[result]
+        newMatch = Match(matchID=matchID,league=league,date=date,home_team=home_team,away_team=away_team,result=_result)
+        DBController.saveMatch(newMatch.toDTO())
         return newMatch
     except KeyError:
         print("Could not find the associate ENUM")
@@ -54,6 +42,7 @@ def setMatchResult(matchID,result):
         match=DBController.findMatch(matchID)
         result=enumDICT[result]
         match.setResult(result)
+        DBController.updateMatch(match.toDTO())
         return match
     except KeyError:
         print("Could not find the associate ENUM")
@@ -75,7 +64,7 @@ def setSingleBet(receiptID, bet_value,bet_odd,matchID,result):
         match=DBController.findMatch(matchID)
         result=enumDICT[result]
         form=BetForm(receiptID, bet_value, bet_odd, [(match,result)])
-        DBController.saveBetForm(form)
+        DBController.saveBetForm(form.toDTO())
         return True
     except KeyError:
         print("Could not find the associate ENUM")
@@ -101,7 +90,7 @@ def setDoubleBet(receiptID, bet_value,bet_odd,match1_ID,match2_ID,result_1,resul
         result1=enumDICT[result_1]
         result2=enumDICT[result_2]
         form=BetForm(receiptID, bet_value, bet_odd, [(match1,result1),(match2,result2)])
-        DBController.saveBetForm(form)
+        DBController.saveBetForm(form.toDTO())
         return True
     except KeyError:
         print("Could not find the associate ENUM")

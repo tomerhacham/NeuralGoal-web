@@ -13,7 +13,7 @@ class Match:
         @param date:datetime, the date that the game is occurring
         @param home_team:string, name of the home team
         @param away_team:string, name of the away team
-        @param result:Result enum
+        @param result (OPTIONAL):Result enum or None
         '''
         self._associateBets=[]
         self._matchID=matchID
@@ -36,3 +36,6 @@ class Match:
 
     def notifyAll(self):
         for form in self._associateBets: form.checkWin()
+
+    def toDTO(self):
+        pass

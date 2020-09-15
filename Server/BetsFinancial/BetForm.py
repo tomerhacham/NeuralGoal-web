@@ -35,3 +35,6 @@ class BetForm:
 
     def notifyWin(self):
         funds.addWinningMoney(self._bet_odd * self._bet_value)
+
+    def toDTO(self):
+        pass
