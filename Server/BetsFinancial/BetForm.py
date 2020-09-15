@@ -1,6 +1,8 @@
 from datetime import datetime
 from functools import reduce
 import Server.BetsFinancial.FundsController as funds
+from Server.DataAccess.DTOs import betForm as dto
+
 Match=0
 ExpectedResult=1
 
@@ -37,4 +39,5 @@ class BetForm:
         funds.addWinningMoney(self._bet_odd * self._bet_value)
 
     def toDTO(self):
-        pass
+        flatBets=map(lambda pair:(pair[Match].matchID,pair[ExpectedResult].value))
+        return dto(self._receiptID,self._date,self._bet_value,self._bet_odd,self._isWin,self._profitExpectation,flatBets)

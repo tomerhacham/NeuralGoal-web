@@ -1,4 +1,4 @@
-from Server.BetsFinancial.BetForm import BetForm
+from Server.DataAccess.DTOs import betMatch as dto
 from enum import Enum
 class Result(Enum):
     Home='1'
@@ -38,4 +38,5 @@ class Match:
         for form in self._associateBets: form.checkWin()
 
     def toDTO(self):
-        pass
+        flatAssociateBets =map(lambda form:form.receiptID,self._associateBets)
+        return dto(self._matchID,self._date,self._league,self._home_team,self._away_team,flatAssociateBets)

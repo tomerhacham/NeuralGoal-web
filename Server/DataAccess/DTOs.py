@@ -1,5 +1,7 @@
 import datetime
 from dataclasses import dataclass
+from typing import List,Tuple
+
 # todo:implement
 # implement as datatclass: require python version 3.7 or above
 
@@ -47,3 +49,24 @@ class prediction:
     pred_x:float
     expected:float
     result:str
+
+@dataclass
+class betMatch:
+    matchID:str
+    date: datetime.datetime
+    league:str
+    home_team:str
+    away_team:str
+    associateBets:List[str]
+
+@dataclass
+class betForm:
+    receiptID:str
+    date: datetime.datetime
+    bet_value:float
+    bet_odds:float
+    isWin:bool
+    profitExpectation:float
+    bets:List[Tuple[str,str]]
+
+
