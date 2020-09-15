@@ -31,12 +31,12 @@ class Match:
         self._result=result
         self.notifyAll()
 
-    def registerBetForm(self,form):
-        self._associateBets.append(form)
-
-    def notifyAll(self):
-        for form in self._associateBets: form.checkWin()
+    def associateBetForm(self,receiptID):
+        self._associateBets.append(receiptID)
 
     def toDTO(self):
-        flatAssociateBets =map(lambda form:form.receiptID,self._associateBets)
-        return dto(self._matchID,self._date,self._league,self._home_team,self._away_team,flatAssociateBets)
+        return dto(self._matchID,self._date,self._league,self._home_team,self._away_team,self._result,self._associateBets)
+
+    @staticmethod
+    def constructor(dto:dto):
+        return Match(dto.matchID,dto.league,dto.date,dto.home_team,dto.away_team,dto.result)

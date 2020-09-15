@@ -1,7 +1,15 @@
-from Server.DataAccess.DTOs import match
+from Server.DataAccess.DTOs import *
 from Server.DataAccess.MongoDBConnection import MongoDBConnection
+from Server.BetsFinancial.Match import Match, Result
+from Server.BetsFinancial.BetForm import BetForm
 import pandas as pd
-
+enumDICT = {
+    '1':Result.Home,
+    '2':Result.Away,
+    'X':Result.Draw
+}
+Match=0
+ExpectedResult=1
 DBConnection = MongoDBConnection()
 
 def getAllData(as_dataframe=False):
@@ -48,19 +56,40 @@ def updateDB():
     return None
 
 def saveMatch(newMatch):
+    '''
+    @param newMatch:DTO.betMatch
+    @return:
+    '''
     return None
+
 def updateMatch(match):
+    '''
+    amtch is already DTO
+    @param match:DTO.betMatch
+    @return:
+    '''
     #TODO: implement
     return None
+
 def findMatch(matchID):
     #TODO: implement
-    return None
+    dto=(**what returns from mongo)
+    return Match.constructor(dto)
+
 def saveBetForm(form):
     # TODO: implement
     return None
 def findBetForm(receiptID):
-    #TODO: implement
-    return None
+    try:
+        dto=(**what returns from mongo)
+        bets_list=map(lambda pair: (findMatch(pair[Match]),enumDICT[pair[ExpectedResult]]))
+        return BetForm.constructor(dto,bets_list)
+    except KeyError:
+        print("Could not find the associate ENUM")
+        return None
+    except:
+        print("An error has been occurred")
+        return None
 
 def getLastFundStatus():
     '''

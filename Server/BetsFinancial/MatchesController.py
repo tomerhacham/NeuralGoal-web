@@ -43,6 +43,8 @@ def setMatchResult(matchID,result):
         result=enumDICT[result]
         match.setResult(result)
         DBController.updateMatch(match.toDTO())
+        for receiptID in match._associateBets:
+            DBController.findBetForm(receiptID).checkWin()
         return match
     except KeyError:
         print("Could not find the associate ENUM")
@@ -64,6 +66,7 @@ def setSingleBet(receiptID, bet_value,bet_odd,matchID,result):
         match=DBController.findMatch(matchID)
         result=enumDICT[result]
         form=BetForm(receiptID, bet_value, bet_odd, [(match,result)])
+        match.associateBetForm(receiptID)
         DBController.saveBetForm(form.toDTO())
         return True
     except KeyError:
@@ -85,11 +88,13 @@ def setDoubleBet(receiptID, bet_value,bet_odd,match1_ID,match2_ID,result_1,resul
     @return:None
     '''
     try:
-        match1=DBController.findMatch(match1_ID)
-        match2=DBController.findMatch(match2_ID)
+        match1:Match=DBController.findMatch(match1_ID)
+        match2:Match=DBController.findMatch(match2_ID)
         result1=enumDICT[result_1]
         result2=enumDICT[result_2]
         form=BetForm(receiptID, bet_value, bet_odd, [(match1,result1),(match2,result2)])
+        match1.associateBetForm(receiptID)
+        match2.associateBetForm(receiptID)
         DBController.saveBetForm(form.toDTO())
         return True
     except KeyError:

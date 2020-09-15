@@ -1,5 +1,7 @@
 from datetime import datetime
 from functools import reduce
+from typing import List, Tuple
+from Server.BetsFinancial.Match import Match,Result
 import Server.BetsFinancial.FundsController as funds
 from Server.DataAccess.DTOs import betForm as dto
 
@@ -41,3 +43,7 @@ class BetForm:
     def toDTO(self):
         flatBets=map(lambda pair:(pair[Match].matchID,pair[ExpectedResult].value))
         return dto(self._receiptID,self._date,self._bet_value,self._bet_odd,self._isWin,self._profitExpectation,flatBets)
+
+    @staticmethod
+    def constructor(dto:dto,bets_list:List[Tuple[Match,Result]]):
+        return BetForm(dto.receiptID, dto.bet_value, dto.bet_odd, bets_list)

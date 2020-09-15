@@ -57,6 +57,7 @@ class betMatch:
     league:str
     home_team:str
     away_team:str
+    result:str
     associateBets:List[str]
 
 @dataclass
