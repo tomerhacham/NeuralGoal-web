@@ -1,3 +1,14 @@
+from Server.BetsFinancial.BetForm import BetForm
+from Server.BetsFinancial.Match import Match
+import Server.DataAccess.DBController as DBController
+from Server.BetsFinancial.Match import Result
+
+enumDICT = {
+    '1':Result.Home,
+    '2':Result.Away,
+    'X':Result.Draw
+}
+
 def addMatch(league ,date ,home_team, away_team) :
     '''
     @param league:string , the league that the match took place.
@@ -6,6 +17,9 @@ def addMatch(league ,date ,home_team, away_team) :
     @param away_team:string, name of the way team.
     @return Match object that represent the match
     '''
+    matchID=generateMatchID()
+    newMatch = Match(matchID=matchID,league=league,date=date,home_team=home_team,away_team=away_team)
+    DBController.saveMatch(newMatch)
     return None
 
 def addMatch(league ,date ,home_team, away_team,result) :
@@ -17,7 +31,18 @@ def addMatch(league ,date ,home_team, away_team,result) :
     @param result:string, the result of the match ('1','X','2')
     @return: Match object that represent the match
     '''
-    return None
+    try:
+        matchID=generateMatchID()
+        result=enumDICT[result]
+        newMatch = Match(matchID=matchID,league=league,date=date,home_team=home_team,away_team=away_team,result=result)
+        DBController.saveMatch(newMatch)
+        return newMatch
+    except KeyError:
+        print("Could not find the associate ENUM")
+        return False
+    except:
+        print("An error has been occurred")
+        return False
 
 def setMatchResult(matchID,result):
     '''
@@ -25,7 +50,17 @@ def setMatchResult(matchID,result):
     @param result:string, the result of the match ('1','X','2')
     @return: Match object that represent the match
     '''
-    return None
+    try:
+        match=DBController.findMatch(matchID)
+        result=enumDICT[result]
+        match.setResult(result)
+        return match
+    except KeyError:
+        print("Could not find the associate ENUM")
+        return False
+    except:
+        print("An error has been occurred")
+        return False
 
 def setSingleBet(receiptID, bet_value,bet_odd,matchID,result):
     '''
@@ -36,7 +71,18 @@ def setSingleBet(receiptID, bet_value,bet_odd,matchID,result):
     @param result:string, the outcome of the match we expect ('1','X','2')
     @return:None
     '''
-    return None
+    try:
+        match=DBController.findMatch(matchID)
+        result=enumDICT[result]
+        form=BetForm(receiptID, bet_value, bet_odd, [(match,result)])
+        DBController.saveBetForm(form)
+        return True
+    except KeyError:
+        print("Could not find the associate ENUM")
+        return False
+    except:
+        print("An error has been occurred")
+        return False
 
 def setDoubleBet(receiptID, bet_value,bet_odd,match1_ID,match2_ID,result_1,result_2):
     '''
@@ -49,4 +95,21 @@ def setDoubleBet(receiptID, bet_value,bet_odd,match1_ID,match2_ID,result_1,resul
     @param result_2:string, the outcome of the second match we expect ('1','X','2')
     @return:None
     '''
-    return None
+    try:
+        match1=DBController.findMatch(match1_ID)
+        match2=DBController.findMatch(match2_ID)
+        result1=enumDICT[result_1]
+        result2=enumDICT[result_2]
+        form=BetForm(receiptID, bet_value, bet_odd, [(match1,result1),(match2,result2)])
+        DBController.saveBetForm(form)
+        return True
+    except KeyError:
+        print("Could not find the associate ENUM")
+        return False
+    except:
+        print("An error has been occurred")
+        return False
+
+def generateMatchID():
+    #TODO: implement
+    return

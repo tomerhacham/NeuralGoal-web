@@ -47,6 +47,19 @@ def updateDB():
     #TODO: implement- scrap all the data
     return None
 
+def saveMatch(newMatch):
+    #TODO: implement
+    return None
+
+def findMatch(matchID):
+    #TODO: implement
+    return None
+def saveBetForm(form):
+    # TODO: implement
+    return None
+def findBetForm(receiptID):
+    #TODO: implement
+    return None
 
 #allData = getAllData(as_dataframe=True)
 #for game in allData:
