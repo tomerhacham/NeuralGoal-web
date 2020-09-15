@@ -1,10 +1,8 @@
-import logging,grpc
-import protol
+import logging,grpc,protol
 import Server.protocol as protocol
-from datetime import date, datetime
+from datetime import date
 from concurrent import futures
 from dateutil.parser import parse
-#from Server.protocs import match_pb2_grpc, match_pb2
 from Server.DataAccess.DTOs import match
 from Server.DataAccess import DBController
 from Server.NeuralNetwork import NeuralNetworkController
