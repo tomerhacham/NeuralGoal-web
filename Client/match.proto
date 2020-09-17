@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package match;
+
+//SERVICES DEFINITION
+service MatchSender {
+  rpc getSingleMatch (MatchRequest) returns (Match) {}
+
+  //return list of matches associate to the requested league in the last 3 seasons
+  rpc getMatchInLastSeasons (LeagueRequest) returns (MatchList) {}
+
+  //return list of the upcoming game per league
+  rpc getUpcomingGames (LeagueRequest) returns (MatchList) {}
+
+  //set the upcoming game's odds after manual insert
+  rpc setOddsforUpcominGames (MatchList) returns (MatchList) {}
+
+  //predicts all upcoming games 
+  rpc predict (Empty) returns (PredictionList) {}
+
+  rpc clearDB (Empty) returns (strMsg) {}
+
+  rpc updateDB (Empty) returns (strMsg) {}
+
+}
+//Message Types
+message Empty {}
+
+//the message that will be sent from the client to request match (TODO: needs to add all the primary key in order to query it)
+message MatchRequest {
+  string league = 1;
+}
+
+message LeagueRequest{
+  string league=1;
+}
+
+message strMsg {
+  string msg=1;
+}
+
+// match data type to be sent as response
+message Match {
+  string league=1;
+  string date=2;
+  int32 round=3;
+  string home_team_name=4;
+  string away_team_name=5;
+  int32 home_team_rank=6;
+  int32 away_team_rank=7;
+  double home_team_scored=8;
+  double away_team_scored=9;
+  double home_team_received=10;
+  double away_team_received=11;
+  int32 home_att=12;
+  int32 away_att=13;
+  int32 home_def=14;
+  int32 away_def=15;
+  int32 home_mid=16;
+  int32 away_mid=17;
+  double home_odds_n=18;
+  double draw_odds_n=19;
+  double away_odds_n=20;
+  string result=21;
+  double home_odds_nn=22;
+  double draw_odds_nn=23;
+  double away_odds_nn=24;
+}
+
+//prediction data type
+message Prediction {
+  string league=1;
+  string date=2;
+  string home_team_name=3;
+  string away_team_name=4;
+  double home_odds_nn=5;
+  double draw_odds_nn=6;
+  double away_odds_nn=7;
+  double pred_1=8;
+  double pred_2=9;
+  double pred_x=10;
+  double expected=11;
+  string result=12;
+}
+
+message MatchList {
+    repeated Match list=1;
+}
+
+message PredictionList {
+  repeated Prediction list=1;
+}

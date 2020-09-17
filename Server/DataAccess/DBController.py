@@ -73,7 +73,8 @@ def updateMatch(match):
 
 def findMatch(matchID):
     #TODO: implement
-    dto=(**what returns from mongo)
+    #dto=(**what returns from mongo)
+    dto=None
     return Match.constructor(dto)
 
 def saveBetForm(form):
@@ -81,7 +82,8 @@ def saveBetForm(form):
     return None
 def findBetForm(receiptID):
     try:
-        dto=(**what returns from mongo)
+        #dto=(**what returns from mongo)
+        dto=None
         bets_list=map(lambda pair: (findMatch(pair[Match]),enumDICT[pair[ExpectedResult]]))
         return BetForm.constructor(dto,bets_list)
     except KeyError:

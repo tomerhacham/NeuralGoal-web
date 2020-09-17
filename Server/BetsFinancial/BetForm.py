@@ -1,12 +1,15 @@
 from datetime import datetime
 from functools import reduce
-from typing import List, Tuple
+from typing import List, Tuple, Generic,TypeVar
 from Server.BetsFinancial.Match import Match,Result
 import Server.BetsFinancial.FundsController as funds
 from Server.DataAccess.DTOs import betForm as dto
 
 Match=0
 ExpectedResult=1
+T1= TypeVar('T1')
+T2= TypeVar('T2')
+
 
 class BetForm:
     def __init__(self, receiptID, bet_value, bet_odd, bets_list):
@@ -47,5 +50,5 @@ class BetForm:
         return dto(self._receiptID,self._date,self._bet_value,self._bet_odd,self._isWin,self._profitExpectation,flatBets)
 
     @staticmethod
-    def constructor(dto:dto,bets_list:List[Tuple[Match,Result]]):
+    def constructor(dto:dto,bets_list:List[Tuple[T1,T2]]):
         return BetForm(dto.receiptID, dto.bet_value, dto.bet_odd, bets_list)

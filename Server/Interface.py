@@ -129,16 +129,15 @@ class MatchSender(match_pb2_grpc.MatchSenderServicer):
             _prediction.reslt=dto.result
         return predictions
 
-    def dbfunctions(self, request, context):
-        if request.command==match_pb2.dbCommand.Command.CLEAR:
-           print('clear Database')
-           #DBController.clearDB()
-           msg=match_pb2.strMsg(msg='Database has been cleared')
-        elif request.command==match_pb2.dbCommand.Command.UPDATE:
-            print('update Database')
-            DBController.updateDB()
-            msg=match_pb2.strMsg(msg='Database has benn updated')
-        return msg
+    def clearDB (self, request, context):
+        print("clearDB")
+        #DBController.clearDB()
+        return match_pb2.strMsg(msg='clearDB accepted')
+
+    def updateDB(self, request, context):
+        print("updateDB")
+        #DBController.updateDB()
+        return match_pb2.strMsg(msg="updateDB accepted")
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))

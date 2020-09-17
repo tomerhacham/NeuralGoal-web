@@ -1,4 +1,4 @@
-import Server.DataAccess.DBController as DBController
+from Server.DataAccess import DBController
 
 def depositFunds(name,amount):
     '''
