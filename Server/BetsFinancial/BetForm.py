@@ -31,10 +31,12 @@ class BetForm:
         Using reduce to check if all the bets were corrects, if so update the funds with the reward
         @return:boolean
         '''
-        m = map(lambda bet: bet[Match].result is bet[ExpectedResult], self._bets)
-        if reduce(lambda prev, curr: prev and curr, m):
-            self.notifyWin()  # notify the fundsController and update the fund with the winning amount
-            return True
+        if not self._isWin:
+            m = map(lambda bet: bet[Match].result is bet[ExpectedResult], self._bets)
+            if reduce(lambda prev, curr: prev and curr, m):
+                self._isWin=True
+                self.notifyWin()  # notify the fundsController and update the fund with the winning amount
+                return True
         return False
 
     def notifyWin(self):
