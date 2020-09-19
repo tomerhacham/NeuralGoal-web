@@ -43,7 +43,6 @@ class MatchSender(match_pb2_grpc.MatchSenderServicer):
             _match.away_odds_nn=game.away_odds_nn
             break
         return matchlist
-
     def getUpcomingGames(self, request, context):
         matchlist=match_pb2.MatchList()
         upcoming=DBController.getUpcomingGames(league=request.league)
@@ -75,41 +74,6 @@ class MatchSender(match_pb2_grpc.MatchSenderServicer):
             _match.draw_odds_nn = game.draw_odds_nn
             _match.away_odds_nn = game.away_odds_nn
         return  matchlist
-
-    def setOddsforUpcominGames(self, request, context):
-        matchlist = match_pb2.MatchList()
-        for game in request.list:
-            DBController.updateUpcomingGameOdds(protocol.responseToMatchDTO(game))
-        for game in DBController.getUpcomingGames(league='all'):
-            game = match(**game)
-            _match = matchlist.list.add()
-            _match.league = game.league
-            _match.date = date.fromisoformat(game.date)
-            _match.date = parse(game.date)
-            _match.round = game.round
-            _match.home_team_name = game.home_team_name
-            _match.away_team_name = game.away_team_name
-            _match.home_team_rank = game.home_team_rank
-            _match.away_team_rank = game.away_team_rank
-            _match.home_team_scored = game.home_team_scored
-            _match.away_team_scored = game.away_team_scored
-            _match.home_team_received = game.home_team_received
-            _match.away_team_received = game.away_team_received
-            _match.home_att = game.home_att
-            _match.away_att = game.away_att
-            _match.home_def = game.home_def
-            _match.away_def = game.away_def
-            _match.home_mid = game.home_mid
-            _match.away_mid = game.away_mid
-            _match.home_odds_n = game.home_odds_n
-            _match.draw_odds_n = game.draw_odds_n
-            _match.away_odds_n = game.away_odds_n
-            _match.result = game.result
-            _match.home_odds_nn = game.home_odds_nn
-            _match.draw_odds_nn = game.draw_odds_nn
-            _match.away_odds_nn = game.away_odds_nn
-        return matchlist
-
     def predict(self, request, context):
         print("Prediction in process")
         predictions=match_pb2.PredictionList()
@@ -128,16 +92,25 @@ class MatchSender(match_pb2_grpc.MatchSenderServicer):
             _prediction.expected=dto.expected
             _prediction.reslt=dto.result
         return predictions
-
     def clearDB (self, request, context):
         print("clearDB")
         #DBController.clearDB()
         return match_pb2.strMsg(msg='clearDB accepted')
-
     def updateDB(self, request, context):
         print("updateDB")
         #DBController.updateDB()
         return match_pb2.strMsg(msg="updateDB accepted")
+    def addMatch(self, request, context):
+        return match_pb2.Match(league=request.league, date=request.date,home_team=request.home_team,away_team=request.away_team,result=request.result,matchID=request.matchID)
+    def setSingleBet(self, request, context):
+        return match_pb2.strMsg(msg='set single bet')
+    def setDoubleBet(self, request, context):
+        return match_pb2.strMsg(msg='set double bet')
+    def depositFunds(self, request, context):
+        return match_pb2.strMsg(msg='deposite funds')
+    def withdraw(self, request, context):
+        return match_pb2.strMsg(msg='withdraw')
+
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
