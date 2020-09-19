@@ -1,51 +1,97 @@
 syntax = "proto3";
-
 package match;
 
-//the service that will send single match
+//SERVICES DEFINITION
 service MatchSender {
-  rpc getSingleMatch (MatchRequest) returns (Match) {}
 
   //return list of matches associate to the requested league in the last 3 seasons
-  rpc getMatchInLastSeasons (LeagueRequest) returns (MatchList) {}
+  rpc getMatchInLastSeasons (League) returns (MatchList) {}
 
   //return list of the upcoming game per league
-  rpc getUpcomingGames (LeagueRequest) returns (MatchList) {}
-
-  //set the upcoming game's odds after manual insert
-  rpc setOddsforUpcominGames (MatchList) returns (MatchList) {}
+  rpc getUpcomingGames (League) returns (MatchList) {}
 
   //predicts all upcoming games 
-  rpc predict (predictRequest) returns (PredictionList) {}
+  rpc predict (Empty) returns (PredictionList) {}
 
-  //in order to clean or rewrite the db
-  rpc dbfunctions (dbCommand) returns (strMsg) {}
+  rpc clearDB (Empty) returns (strMsg) {}
+
+  rpc updateDB (Empty) returns (strMsg) {}
+
+  rpc addMatch (Match) returns (Match) {}
+
+  rpc setSingleBet (SingleBet) returns (strMsg) {}
+  rpc setDoubleBet (DoubleBet) returns (strMsg) {}
+  rpc depositFunds (Deposit) returns (strMsg) {}
+  rpc withdraw (amount) returns (strMsg) {}
+
+}
+//Message Types
+message Empty {}
+
+message Deposit {
+  string name=1;
+  double amount=2;
+}
+message amount {
+  double amount=1;
 }
 
-//the message that will be sent from the client to request match (TODO: needs to add all the primary key in order to query it)
-message MatchRequest {
-  string league = 1;
-}
-
-message LeagueRequest{
+message League{
   string league=1;
 }
 
-message predictRequest{}
 message strMsg {
   string msg=1;
 }
-message dbCommand {
-  Command command=1;
-  
-  enum Command {
-    CLEAR=0;
-    UPDATE=1;
+
+message Match {
+  string league=1;
+  string date=2;
+  string home_team=3;
+  string away_team=4;
+  enum Result {
+    NULL=0;
+    HOME=1;
+    AWAY=2;
+    DRAW=3;
   }
+  Result result=5; 
+  string matchID=6;
+}
+
+message SingleBet {
+  string receiptID=1;
+  double bet_value=2;
+  double bet_odd=3;
+  string matchID=4;
+  enum Result {
+    NULL=0;
+    HOME=1;
+    AWAY=2;
+    DRAW=3;
+  }
+  Result result=5; 
+}
+
+message DoubleBet {
+  string receiptID=1;
+  double bet_value=2;
+  double bet_odd=3;
+  string match1_ID=4;
+  enum Result {
+    NULL=0;
+    HOME=1;
+    AWAY=2;
+    DRAW=3;
+  }
+  Result result_1=5; 
+  string match2_ID=6;
+  Result result_2=7; 
+
 }
 
 // match data type to be sent as response
-message Match {
+message MatchData {
   string league=1;
   string date=2;
   int32 round=3;
@@ -89,7 +135,7 @@ message Prediction {
 }
 
 message MatchList {
-    repeated Match list=1;
+    repeated MatchData list=1;
 }
 
 message PredictionList {

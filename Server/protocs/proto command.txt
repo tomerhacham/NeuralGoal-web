@@ -1,3 +1,0 @@
-python -m grpc_tools.protoc -I="C:\Project\NeuralGoal-web\Server\protocs" --python_out=. --grpc_python_out=. "C:\Project\NeuralGoal-web\Server\protocs\match.proto"
-
-protoc --plugin=protoc-gen-grpc-web="C:\Users\Tomer Hacham\Desktop\protoc-gen-grpc-web-1.2.1-windows-x86_64.exe" --js_out=import_style=commonjs,binary:C:\Project\NeuralGoal-web\Server\protocs  --grpc-web_out=import_style=commonjs,mode=grpcwebtext:C:\Project\NeuralGoal-web\Server\protocs match.proto
