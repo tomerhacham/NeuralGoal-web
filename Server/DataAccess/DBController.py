@@ -22,7 +22,6 @@ def getAllData(as_dataframe=False):
         return pd.DataFrame.from_records(cursor)
     return DBConnection.ProductionDBMainTable.find({},projection={'_id': False})
 
-
 def getUpcomingGames(league,as_dataframe=False):
     '''
     @param league: string of the requested league (can be 'all' in order for all leagues)
@@ -46,10 +45,8 @@ def updateUpcomingGameOdds(dto):
     '''
     return None
 
-
 def clearDB():
     DBConnection.clearDB()
-
 
 def updateDB():
     #TODO: implement- scrap all the data

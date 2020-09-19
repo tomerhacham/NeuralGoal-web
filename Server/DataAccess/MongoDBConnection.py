@@ -7,14 +7,24 @@ class MongoDBConnection:
 
         # Development DB
         DevCollection = client["NeuralGoalDB-Development"]
-        DevDBGames = DevCollection["Games"]
+        DevDBMainTable = DevCollection["MainTable"]
+        DevDBUpcomingGames = DevCollection["UpcomingGames"]
+        DevDBBetForms = DevCollection["BetForms"]
+        DevDBFundStatus = DevCollection["FundStatus"]
+        DevDBMatches = DevCollection["Matches"]
+        DevDBTransaction = DevCollection["Transaction"]
 
         # Production DB
         ProductionCollection = client["NeuralGoalDB"]
-        ProductionDBMainTable = ProductionCollection["Main_Table"]
+        ProductionDBMainTable = ProductionCollection["MainTable"]
         ProductionDBUpcomingGames = ProductionCollection["Upcoming_Games"]
 
-        self.DevDBGames = DevDBGames
+        self.DevDBMainTable = DevDBMainTable
+        self.DevDBUpcomingGames=DevDBUpcomingGames
+        self.DevDBBetForms=DevDBBetForms
+        self.DevDBFundStatus=DevDBFundStatus
+        self.DevDBMatches=DevDBMatches
+        self.DevDBTransaction=DevDBTransaction
         self.ProductionDBMainTable = ProductionDBMainTable
         self.ProductionDBUpcomingGames = ProductionDBUpcomingGames
 
