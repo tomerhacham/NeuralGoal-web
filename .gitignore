@@ -180,3 +180,5 @@ Server/__pycache__/
 /Server/protocs/package-lock.json
 /Server/protocs/test.js
 /Server/protocs/node_modules/
+/Client/package.json
+/Client/package-lock.json
