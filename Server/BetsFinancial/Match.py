@@ -37,6 +37,9 @@ class Match:
     def toDTO(self):
         return dto(self._matchID,self._date,self._league,self._home_team,self._away_team,self._result,self._associateBets)
 
+    def __repr__(self):
+        return 'Match(matchID:{}, league:{}, date:{}, home_team:{}, away_team:{}, result:{})'.format(self._matchID,self._league,self._date,self._home_team,self._away_team,self._result)
+
     @staticmethod
     def constructor(dto:dto):
         return Match(dto.matchID,dto.league,dto.date,dto.home_team,dto.away_team,dto.result)

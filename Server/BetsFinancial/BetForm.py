@@ -1,8 +1,7 @@
 from datetime import datetime
 from functools import reduce
-from typing import List, Tuple, Generic,TypeVar
+from typing import List, Tuple,TypeVar
 from Server.BetsFinancial.Match import Match,Result
-import Server.BetsFinancial.FundsController as funds
 from Server.DataAccess.DTOs import betForm as dto
 
 Match=0
@@ -43,6 +42,7 @@ class BetForm:
         return False
 
     def notifyWin(self):
+        import Server.BetsFinancial.FundsController as funds
         funds.addWinningMoney(self._bet_odd * self._bet_value)
 
     def toDTO(self):

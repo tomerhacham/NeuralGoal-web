@@ -1,10 +1,12 @@
 import datetime
 from dataclasses import dataclass
+from dataclasses_json import dataclass_json
 from typing import List,Tuple
 
 # todo:implement
 # implement as datatclass: require python version 3.7 or above
 
+@dataclass_json
 @dataclass
 class upcoming_match:
     league:str
@@ -31,10 +33,12 @@ class upcoming_match:
     draw_odds_nn:float
     away_odds_nn:float
 
+@dataclass_json
 @dataclass
 class match(upcoming_match):
     result:str
 
+@dataclass_json
 @dataclass
 class prediction:
     league:str
@@ -50,16 +54,18 @@ class prediction:
     expected:float
     result:str
 
+@dataclass_json
 @dataclass
 class betMatch:
     matchID:str
-    date: datetime.datetime
+    date: str
     league:str
     home_team:str
     away_team:str
     result:str
     associateBets:List[str]
 
+@dataclass_json
 @dataclass
 class betForm:
     receiptID:str
