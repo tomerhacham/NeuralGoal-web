@@ -5,6 +5,18 @@ class Result(Enum):
     Away='2'
     Draw='X'
 
+    @classmethod
+    def from_str(cls, str):
+        x= cls._value2member_map_
+        value = cls._value2member_map_[str]
+        if value==None:
+            raise NotImplementedError
+        else:
+            return value
+#        print(x)
+        #else:
+        #    raise NotImplementedError
+
 class Match:
     def __init__(self,matchID,league,date,home_team,away_team,result=None):
         '''
@@ -35,11 +47,19 @@ class Match:
         self._associateBets.append(receiptID)
 
     def toDTO(self):
-        return dto(self._matchID,self._date,self._league,self._home_team,self._away_team,self._result,self._associateBets)
+        return dto(self._matchID,self._date,self._league,self._home_team,self._away_team,self._result.value,self._associateBets)
 
     def __repr__(self):
-        return 'Match(matchID:{}, league:{}, date:{}, home_team:{}, away_team:{}, result:{})'.format(self._matchID,self._league,self._date,self._home_team,self._away_team,self._result)
+        return 'Match(matchID:{}, league:{}, date:{}, home_team_name:{}, away_team_name:{}, result:{})'.format(self._matchID,self._league,self._date,self._home_team,self._away_team,self._result)
+    def __eq__(self, other):
+        return (isinstance(other,Match) and
+                self._matchID==other._matchID and
+                self._league==other._league and
+                 self._date==other._date and
+                 self._home_team==other._home_team and
+                 self._away_team==other._away_team and
+                 self._result==other._result)
 
     @staticmethod
     def constructor(dto:dto):
-        return Match(dto.matchID,dto.league,dto.date,dto.home_team,dto.away_team,dto.result)
+        return Match(dto.matchID,dto.league,dto.date,dto.home_team_name,dto.away_team_name,Result.from_str(dto.result))

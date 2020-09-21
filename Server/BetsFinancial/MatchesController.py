@@ -65,7 +65,7 @@ def setSingleBet(receiptID, bet_value,bet_odd,matchID,result):
     try:
         match=DBController.findMatch(matchID)
         result=enumDICT[result]
-        form=BetForm(receiptID, bet_value, bet_odd, [(match,result)])
+        form=BetForm(receiptID=receiptID,bet_value=bet_value, bet_odd=bet_odd,bets_list=[(match,result)])
         match.associateBetForm(receiptID)
         DBController.saveBetForm(form.toDTO())
         return True
@@ -92,7 +92,7 @@ def setDoubleBet(receiptID, bet_value,bet_odd,match1_ID,match2_ID,result_1,resul
         match2:Match=DBController.findMatch(match2_ID)
         result1=enumDICT[result_1]
         result2=enumDICT[result_2]
-        form=BetForm(receiptID, bet_value, bet_odd, [(match1,result1),(match2,result2)])
+        form=BetForm(receiptID=receiptID,bet_value=bet_value, bet_odd=bet_odd,bets_list=[(match1,result1),(match2,result2)])
         match1.associateBetForm(receiptID)
         match2.associateBetForm(receiptID)
         DBController.saveBetForm(form.toDTO())

@@ -1,18 +1,14 @@
 import pandas as pd
-
+import datetime
 from Server.BetsFinancial.BetForm import BetForm
 from Server.BetsFinancial.Match import Match, Result
 from Server.DataAccess.DTOs import *
 from Server.DataAccess.MongoDBConnection import MongoDBConnection
 
-enumDICT = {
-    '1':Result.Home,
-    '2':Result.Away,
-    'X':Result.Draw
-}
 MATCH=0
 EXPECTED_RESULT=1
 DBConnection = MongoDBConnection(mode='dev')
+CURR_TIME_STMP=datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
 
 def insertMatchToMainTable(dto):
     '''
@@ -38,8 +34,8 @@ def deleteMatchFromUpcomingGames(date,home_team_name,away_team_name):
     @return:
     '''
     myquery = { "date": date,
-                "home_team": home_team_name,
-                "away_team": away_team_name}
+                "away_team_name": home_team_name,
+                "away_team_name": away_team_name}
     DBConnection.UpcomingGames.delete_one(myquery)
     return None
 
@@ -117,13 +113,16 @@ def findBetForm(receiptID):
     myquery={"receiptID":receiptID}
     try:
         dto=betForm.from_dict(convertStrtoDate(DBConnection.BetForms.find_one(myquery,projection={'_id': False})))
-        bets_list=list(map(lambda pair: (findMatch(pair[MATCH]), enumDICT[pair[EXPECTED_RESULT]])))
+        #match=findMatch(dto.bets[0][MATCH])
+        #res=Result.from_str(dto.bets[0][EXPECTED_RESULT])
+        bets_list=list(map(lambda pair: (findMatch(pair[MATCH]), Result.from_str(pair[EXPECTED_RESULT])),dto.bets))
         return BetForm.constructor(dto,bets_list)
     except KeyError:
         print("Could not find the associate ENUM")
         return None
-    except:
-        print("An error has been occurred")
+    except Exception as e:
+        print(e)
+        #print("An error has been occurred")
         return None
 
 def getLastFundStatus():
@@ -131,8 +130,9 @@ def getLastFundStatus():
     return the current status of the fund
     @return:float
     '''
-    return DBConnection.FundStatus.find().sort({'_id':-1}).limit(1)["amount"]
-    return None
+    last_record= DBConnection.FundStatus.find().sort([('time',-1)]).limit(1).next()
+    amount=last_record['amount']
+    return amount
 
 def updateFundStatus(amount):
     '''
@@ -140,7 +140,7 @@ def updateFundStatus(amount):
     @param amount:float, the current status of the fund
     @return:
     '''
-    record={"time":datetime.datetime().strftime("%d-%m-%Y %H:%M:%S"),
+    record={"time":CURR_TIME_STMP,
             "amount":amount}
     DBConnection.FundStatus.insert(record)
     return None
@@ -152,14 +152,14 @@ def saveTransaction(name, amount):
     @param amount:flaot, the amount of money that has been deposited
     @return:
     '''
-    record={"time":datetime.datetime().strftime("%d-%m-%Y %H:%M:%S"),
+    record={"time":CURR_TIME_STMP,
             "name":name,
             "amount":amount}
     DBConnection.Transaction.insert(record)
     return None
 
 def convertStrtoDate(dict):
-    dict['date']=datetime.datetime.strptime(dict['date'], '%Y-%m-%d')
+    dict['date']=datetime.datetime.strptime(dict['date'], '%d-%m-%Y').date()
     return dict
 def convertDateToStr(dict):
     dict['date']=dict['date'].strftime("%d-%m-%Y")

@@ -10,7 +10,7 @@ from typing import List,Tuple
 @dataclass
 class upcoming_match:
     league:str
-    date:datetime.datetime
+    date:datetime.date
     round:int
     home_team_name:str
     away_team_name:str
@@ -42,7 +42,7 @@ class match(upcoming_match):
 @dataclass
 class prediction:
     league:str
-    date:datetime.datetime
+    date:datetime.date
     home_team_name:str
     away_team_name:str
     home_odds_nn:float
@@ -60,8 +60,8 @@ class betMatch:
     matchID:str
     date: str
     league:str
-    home_team:str
-    away_team:str
+    home_team_name:str
+    away_team_name:str
     result:str
     associateBets:List[str]
 
@@ -69,9 +69,9 @@ class betMatch:
 @dataclass
 class betForm:
     receiptID:str
-    date: datetime.datetime
+    date: datetime.date
     bet_value:float
-    bet_odds:float
+    bet_odd:float
     isWin:bool
     profitExpectation:float
     bets:List[Tuple[str,str]]
