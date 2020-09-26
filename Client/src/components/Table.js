@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import MUIDataTable from "mui-datatables";
+import {testfunc} from "../Client"
 
 function createData(
   league,
@@ -65,6 +66,9 @@ const rows = [
     0.66
   ),
 ];
+
+console.log(rows)
+console.log(JSON.stringify(testfunc()))
 
 export default function EnhancedTable() {
   const [tableBodyHeight] = useState("100%");
