@@ -182,3 +182,4 @@ Server/__pycache__/
 /Server/protocs/node_modules/
 /Client/package.json
 /Client/package-lock.json
+/Client/gRPC/node_modules/

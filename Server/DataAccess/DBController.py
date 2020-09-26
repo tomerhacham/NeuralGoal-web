@@ -48,7 +48,7 @@ def getAllData(as_dataframe=False):
     if as_dataframe:
         return pd.DataFrame.from_records(cursor)
     else:
-        dtos = map(lambda record: match.from_dict(convertStrtoDate(record)))
+        dtos = list(map(lambda record: match.from_dict(convertStrtoDate(record)),cursor))
     return dtos
 
 def getUpcomingGames(league,as_dataframe=False):

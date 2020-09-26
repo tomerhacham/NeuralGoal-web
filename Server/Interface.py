@@ -1,24 +1,23 @@
-import logging,grpc,protol
-import Server.protocol as protocol
-from datetime import date
+import grpc
+import logging
+import protol
 from concurrent import futures
-from dateutil.parser import parse
-from Server.DataAccess.DTOs import match
 from Server.DataAccess import DBController
+from Server.DataAccess.DTOs import match, upcoming_match
 from Server.NeuralNetwork import NeuralNetworkController
 
 match_pb2, match_pb2_grpc = protol.load('protocs/match.proto')
-
+DATE_FORMAT='DD-MM-YYYY'
 
 class MatchSender(match_pb2_grpc.MatchSenderServicer):
     def getMatchInLastSeasons(self, request, context):
         matchlist = match_pb2.MatchList()
         #for game in DBController.getAllData(league=request.league,as_dataframe=False):
         for game in DBController.getAllData(as_dataframe=False):
-            game=match(**game)
+            #game=match(**(game))
             _match = matchlist.list.add()
             _match.league=game.league
-            _match.date=game.date
+            _match.date=game.date.isoformat()
             _match.round=game.round
             _match.home_team_name=game.home_team_name
             _match.away_team_name=game.away_team_name
@@ -44,13 +43,14 @@ class MatchSender(match_pb2_grpc.MatchSenderServicer):
             break
         return matchlist
     def getUpcomingGames(self, request, context):
+        print("Receive getUpcomingGames Request")
         matchlist=match_pb2.MatchList()
         upcoming=DBController.getUpcomingGames(league=request.league)
         for game in upcoming :
-            game = match(**game)
+            #game = upcoming_match(**game)
             _match = matchlist.list.add()
             _match.league = game.league
-            _match.date = game.date
+            _match.date = game.date.isoformat()
             _match.round = game.round
             _match.home_team_name = game.home_team_name
             _match.away_team_name = game.away_team_name
@@ -69,7 +69,6 @@ class MatchSender(match_pb2_grpc.MatchSenderServicer):
             _match.home_odds_n = game.home_odds_n
             _match.draw_odds_n = game.draw_odds_n
             _match.away_odds_n = game.away_odds_n
-            _match.result = game.result
             _match.home_odds_nn = game.home_odds_nn
             _match.draw_odds_nn = game.draw_odds_nn
             _match.away_odds_nn = game.away_odds_nn
