@@ -183,3 +183,4 @@ Server/__pycache__/
 /Client/package.json
 /Client/package-lock.json
 /Client/gRPC/node_modules/
+/Client/node_modules/
