@@ -3,18 +3,16 @@ import logging
 import protol
 from concurrent import futures
 from Server.DataAccess import DBController
-from Server.DataAccess.DTOs import match, upcoming_match
 from Server.NeuralNetwork import NeuralNetworkController
 
-match_pb2, match_pb2_grpc = protol.load('protocs/match.proto')
+match_pb2, match_pb2_grpc = protol.load('Server/protocs/match.proto')
 DATE_FORMAT='DD-MM-YYYY'
 
 class MatchSender(match_pb2_grpc.MatchSenderServicer):
     def getMatchInLastSeasons(self, request, context):
+        print("request: getMatchInLastSeasons")
         matchlist = match_pb2.MatchList()
-        #for game in DBController.getAllData(league=request.league,as_dataframe=False):
         for game in DBController.getAllData(as_dataframe=False):
-            #game=match(**(game))
             _match = matchlist.list.add()
             _match.league=game.league
             _match.date=game.date.isoformat()
@@ -43,11 +41,10 @@ class MatchSender(match_pb2_grpc.MatchSenderServicer):
             break
         return matchlist
     def getUpcomingGames(self, request, context):
-        print("Receive getUpcomingGames Request")
+        print("request: getUpcomingGames")
         matchlist=match_pb2.MatchList()
         upcoming=DBController.getUpcomingGames(league=request.league)
         for game in upcoming :
-            #game = upcoming_match(**game)
             _match = matchlist.list.add()
             _match.league = game.league
             _match.date = game.date.isoformat()
@@ -114,12 +111,12 @@ class MatchSender(match_pb2_grpc.MatchSenderServicer):
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     match_pb2_grpc.add_MatchSenderServicer_to_server(MatchSender(), server)
-    server.add_insecure_port('[::]:50051')
+    server.add_insecure_port('[::]:53000')
     server.start()
     print("Server is Live")
     server.wait_for_termination()
 
 
-if __name__ == '__main__':
-    logging.basicConfig()
-    serve()
+#if __name__ == '__main__':
+ #   logging.basicConfig()
+  #  serve()
