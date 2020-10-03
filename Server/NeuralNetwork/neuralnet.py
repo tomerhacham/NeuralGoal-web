@@ -1,18 +1,14 @@
-import keras, math,os,logging
+import math,os,logging
 import time
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.callbacks import TensorBoard
+from tensorflow import keras as keras
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.callbacks import TensorBoard
 from Server.NeuralNetwork import batch_size_calc
 
 LOGGIN_NAME ="ann-{}".format((int)(time.time()))
 tensorboard = TensorBoard(log_dir='logs\\{}'.format(LOGGIN_NAME))
 
 class NeuralNet ():
-    model = None
-    input=0
-    output=0
-
     def __init__(self,input_dim,tf_verbose=3):
         self.input=input_dim
         self.output=int(3)
@@ -21,17 +17,18 @@ class NeuralNet ():
 
     #region Model Essence
     def build(self):
-        self.model=Sequential()
-        self.model.add(Dense(units=CalculateNodesInFirstLayer(self.input,self.output),input_dim=self.input, activation='relu'))
-        self.model.add(Dense(units=CalculateNodesInSecondLayer(self.input,self.output),activation='relu'))
-        self.model.add(Dense(units=3, activation='softmax'))
+        self.model=keras.models.Sequential()
+        self.model.add(keras.layers.Dense(units=CalculateNodesInFirstLayer(self.input,self.output),input_dim=self.input, activation='relu'))
+        self.model.add(keras.layers.Dense(units=CalculateNodesInSecondLayer(self.input,self.output),activation='relu'))
+        self.model.add(keras.layers.Dense(units=3, activation='softmax'))
         self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
     def train(self,x,y,_epochs):
-        self.model.fit(x,y, batch_size=batch_size_calc.FindBatchSize(self.model), epochs=_epochs)
+        self.model.fit(x=x,y=y, batch_size=batch_size_calc.FindBatchSize(self.model), epochs=_epochs,shuffle=False)
 
     def predict(self,x): #return array of prediction per the features
-        prediction=self.model.predict_proba(x)
+        #prediction=self.model.predict_proba(x)
+        prediction=self.model.predict(x)
         return prediction
     #endregion
 

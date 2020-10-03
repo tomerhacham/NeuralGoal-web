@@ -1,8 +1,7 @@
 def FindBatchSize(model):
     """#model: model architecture, that is yet to be trained"""
-    import os, sys, psutil, gc, tensorflow, keras
-    import numpy as np
-    from keras import backend as K
+    import os, sys, psutil, gc, tensorflow
+    from tensorflow.keras import backend as K
     BatchFound= 16
 
     try:
