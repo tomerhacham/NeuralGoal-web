@@ -1,7 +1,10 @@
 import math
+import sys
+import time
 import autokeras as ak
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder
+from contextlib import redirect_stdout
+
 
 COLUMNS_NAMES=['away_att','away_def','away_mid',
                'away_team_rank','away_team_received',
@@ -12,35 +15,47 @@ FEATURES_NAME=['away_att','away_def','away_mid',
                'away_team_scored','home_att',
                'home_def','home_mid','home_team_rank','home_team_received','home_team_scored']
 data = pd.read_csv("../mainTableCSV.csv")[COLUMNS_NAMES]
+
+COLUMNS_NAMES=['away_att','away_def','away_mid',
+               'away_team_rank','away_team_received',
+               'away_team_scored','home_att',
+               'home_def','home_mid','home_team_rank','home_team_received','home_team_scored','result']
+FEATURES_NAME=['away_att','away_def','away_mid',
+               'away_team_rank','away_team_received',
+               'away_team_scored','home_att',
+               'home_def','home_mid','home_team_rank','home_team_received','home_team_scored']
+Label_to_value_dict={'X':0,
+                     '1':1,
+                     '2':2}
+value_to_label_dict={0:'X',1:'1',2:'2'}
+
+data = pd.read_csv("../mainTableCSV.csv")[COLUMNS_NAMES]
+X=data.loc[:,FEATURES_NAME]
+Y=data.loc[:,'result':'result']
+
+Y['result']=Y['result'].map(Label_to_value_dict)
+Y = pd.get_dummies(Y,columns=['result'], prefix='result')
+
+Y.rename(columns={'result_0':'X','result_1':'1','result_2':'2'},inplace=True)
+
 Split_point=math.ceil(data.shape[0]*0.8)
-train_set=data[0:Split_point]
-test_set=data[Split_point:]
-x_train=train_set.loc[:, FEATURES_NAME]
-y_train=train_set.loc[:, 'result':'result']
-x_test=test_set.loc[:, FEATURES_NAME]
-y_test=test_set.loc[:, 'result':'result']
-labelencoder = LabelEncoder()
-y_train = labelencoder.fit_transform(y_train['result'])  # X:2 ,2:1, 1:0
-y_test = labelencoder.fit_transform(y_test['result'])  # X:2 ,2:1, 1:0
-print('#result label Encoding')
-le_name_mapping = dict(zip(labelencoder.classes_, labelencoder.transform(labelencoder.classes_)))
-print(le_name_mapping)
-y_train = pd.get_dummies(y_train, prefix="result")
-y_test = pd.get_dummies(y_test, prefix="result")
+x_train=X[0:Split_point]
+y_train=Y[0:Split_point]
+
+x_test=X[Split_point:]
+y_test=Y[Split_point:]
 
 # Initialize the structured data classifier.
-clf = ak.StructuredDataClassifier(column_names=FEATURES_NAME,multi_label=True,overwrite=True,max_trials=10)
+clf = ak.StructuredDataClassifier(column_names=FEATURES_NAME,num_classes=3,multi_label=True,overwrite=True,max_trials=30)
 # Feed the structured data classifier with training data.
-clf.fit(x=x_train,y=y_train,epochs=25)
+clf.fit(x=x_train,y=y_train,epochs=30,shuffle=False)
 
-# Predict with the best model.
-#predicted_y = clf.predict(x_test)
-#df=pd.DataFrame(clf.predict(x_test))
-#print(df.to_markdown())
-# Evaluate the best model with testing data.
-#print(clf.evaluate(x_test,y_test))
 model=clf.export_model()
-model.summary()
+with open('model-summary-{}.txt'.format((int)(time.time())), 'w+') as f:
+    with redirect_stdout(f):
+        model.summary()
+    with redirect_stdout(sys.stdout):
+        model.summary()
 
 print(type(model))  # <class 'tensorflow.python.keras.engine.training.Model'>
 try:
