@@ -23,18 +23,18 @@ class raw_match:
     away_def:int
     home_mid:int
     away_mid:int
-    home_shot:int
-    away_shot:int
-    home_shot_on_target:int
-    away_shot_on_target:int
+    home_shots:int
+    away_shots:int
+    home_shots_on_target:int
+    away_shots_on_target:int
     home_corners:int
     away_corners:int
     home_fouls:int
     away_fouls:int
-    home_yellow_card:int
-    away_yellow_card:int
-    home_red_card:int
-    away_red_card:int
+    home_yellow_cards:int
+    away_yellow_cards:int
+    home_red_cards:int
+    away_red_cards:int
     home_odds_n:float
     draw_odds_n:float
     away_odds_n:float
@@ -66,10 +66,10 @@ class calc_match:
     away_def: int
     home_mid: int
     away_mid: int
-    home_avg_shot: int
-    away_avg_shot: int
-    home_avg_shot_on_target: int
-    away_avg_shot_on_target: int
+    home_avg_shots: int
+    away_avg_shots: int
+    home_avg_shots_on_target: int
+    away_avg_shots_on_target: int
     home_avg_corners: int
     away_avg_corners: int
     home_avg_fouls: int
