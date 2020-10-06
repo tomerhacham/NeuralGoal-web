@@ -1,5 +1,5 @@
 from datetime import datetime
-from Server.DataAccess.Utils.DTOs import raw_match, calc_match
+from Server.DataAccess.Utils.DTOs import raw_match
 import pandas as pd
 from Server.DataAccess.MongoDBConnection import MongoDBConnection
 from typing import Dict
@@ -64,8 +64,8 @@ class Match:
         self.away.addMatch(side='away',match=raw_data)
 
 
-    def convert(self) -> calc_match:
-        values_dict={
+    def convert(self) -> Dict:
+        return {
             'league' : self.home.league,
             'date' : self.raw_data.date,
             'round' : self.raw_data.round,
@@ -102,44 +102,7 @@ class Match:
             'draw_odds_nn' : self.raw_data.draw_odds_nn,
             'away_odds_nn' : self.raw_data.away_odds_nn,
             'result' : self.raw_data.result}
-        calc = calc_match(**values_dict)
-        #calc.league = self.home.league
-        #calc.date = self.raw_data.date
-        #calc.round = self.raw_data.round
-        #calc.home_team_name = self.raw_data.home_team_name
-        #calc.away_team_name = self.raw_data.away_team_name
-        #calc.home_team_rank = self.raw_data.home_team_rank
-        #calc.away_team_rank = self.raw_data.away_team_rank
-        #calc.home_avg_scored = self.home.avg_scored
-        #calc.home_avg_received = self.home.avg_received
-        #calc.away_avg_scored = self.away.avg_scored
-        #calc.away_avg_received = self.away.avg_received
-        #calc.home_att = self.raw_data.home_att
-        #calc.away_att = self.raw_data.away_att
-        #calc.home_def = self.raw_data.home_def
-        #calc.away_def = self.raw_data.away_def
-        #calc.home_mid = self.raw_data.home_mid
-        #calc.away_mid = self.raw_data.away_mid
-        #calc.home_avg_shot = self.home.avg_shot
-        #calc.away_avg_shot = self.away.avg_scored
-        #calc.home_avg_shot_on_target = self.home.avg_shot_on_target
-        #calc.away_avg_shot_on_target = self.away.avg_shot_on_target
-        #calc.home_avg_corners = self.home.avg_corner
-        #calc.away_avg_corners = self.away.avg_corner
-        #calc.home_avg_fouls = self.home.avg_fouls
-        #calc.away_avg_fouls = self.away.avg_fouls
-        #calc.home_avg_yellow_cards = self.home.avg_yellow_cards
-        #calc.away_avg_yellow_cards = self.away.avg_yellow_cards
-        #calc.home_avg_red_cards = self.home.avg_red_cards
-        #calc.away_avg_red_cards = self.away.avg_red_cards
-        #calc.home_odds_n = self.raw_data.home_odds_n
-        #calc.draw_odds_n = self.raw_data.draw_odds_n
-        #calc.away_odds_n = self.raw_data.away_odds_n
-        #calc.home_odds_nn = self.raw_data.home_odds_nn
-        #calc.draw_odds_nn = self.raw_data.draw_odds_nn
-        #calc.away_odds_nn = self.raw_data.away_odds_nn
-        #calc.result = self.raw_data.result
-        return calc
+
 
 
 def convertStrtoDate(dict: Dict) -> Dict:
@@ -171,19 +134,21 @@ all_teams = dataframe['home_team_name'].unique()
 for team in all_teams.tolist():
     if team not in Teams:
         filter = dataframe['home_team_name'] == team
-        league = dataframe.where(filter, inplace=False).loc[0,'league']
+        selected_frame = dataframe.where(filter, inplace=False).copy()
+        selected_frame=selected_frame.dropna(how='all')
+        selected_frame=selected_frame['league']
+        league=selected_frame.iloc[0]
         Teams[team] = Team(league=league, name=team)
 # sanity check
 print(f'is same length?: {all_teams.__len__() == Teams.keys().__len__()}')
 
 # creating the calculated dataframe
 for row in dataframe.iterrows():
-    a=row[1].to_dict()
-    _raw =  raw_match(**(convertStrtoDate(a)))
-    obj_match = Match(home=Teams[_raw.home_team_name], away=Teams[_raw.away_team_name], raw_data=_raw)
-    to_insert = convertDateToStr(obj_match.convert().to_dict())
+    a:Dict=row[1].to_dict()
+    _raw :raw_match=  raw_match(**(convertStrtoDate(a)))
+    obj_match:Match = Match(home=Teams[_raw.home_team_name], away=Teams[_raw.away_team_name], raw_data=_raw)
+    to_insert:Dict = convertDateToStr(obj_match.convert())
     calc_dataFrame=calc_dataFrame.append(to_insert,ignore_index=True)
     #write to DB
     connection.MainTable.insert_one(to_insert)
-
 print('Calculation ended')
