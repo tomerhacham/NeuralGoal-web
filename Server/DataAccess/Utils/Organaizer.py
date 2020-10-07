@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime
 from Server.DataAccess.Utils.DTOs import raw_match
 import pandas as pd
@@ -131,6 +132,7 @@ dataframe = pd.DataFrame.from_records(raw_data)
 all_teams = dataframe['home_team_name'].unique()
 
 # construction Team's dictionary:
+print('Building Teams dictionary')
 for team in all_teams.tolist():
     if team not in Teams:
         filter = dataframe['home_team_name'] == team
@@ -139,16 +141,22 @@ for team in all_teams.tolist():
         selected_frame=selected_frame['league']
         league=selected_frame.iloc[0]
         Teams[team] = Team(league=league, name=team)
+        print(f'{team} at {league} has been added')
 # sanity check
-print(f'is same length?: {all_teams.__len__() == Teams.keys().__len__()}')
+if not (all_teams.__len__() == Teams.keys().__len__()) :
+    print('WARNING: There is missing team',file=sys.stderr)
+#print(f'is same length?: {all_teams.__len__() == Teams.keys().__len__()}')
 
 # creating the calculated dataframe
-for row in dataframe.iterrows():
-    a:Dict=row[1].to_dict()
+print('Start processing')
+total_rows=dataframe.shape[0]
+for index,row in dataframe.iterrows():
+    a:Dict=row.to_dict()
     _raw :raw_match=  raw_match(**(convertStrtoDate(a)))
     obj_match:Match = Match(home=Teams[_raw.home_team_name], away=Teams[_raw.away_team_name], raw_data=_raw)
     to_insert:Dict = convertDateToStr(obj_match.convert())
     calc_dataFrame=calc_dataFrame.append(to_insert,ignore_index=True)
     #write to DB
     connection.MainTable.insert_one(to_insert)
-print('Calculation ended')
+    print(f'{index+1}/{total_rows}',end='\r',flush=True)
+print('DONE')
