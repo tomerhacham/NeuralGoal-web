@@ -17,6 +17,7 @@ TEAM_RELATED_FEATURES = ['scored',
                          'fouls',
                          'yellow_cards',
                          'red_cards']
+DATE_FORMAT='%Y-%m-%d'
 calc_dataFrame = pd.DataFrame()
 N = 3
 
@@ -107,12 +108,12 @@ class Match:
 
 
 def convertStrtoDate(dict: Dict) -> Dict:
-    dict['date'] = datetime.strptime(dict['date'], '%d/%m/%Y').date()
+    dict['date'] = datetime.strptime(dict['date'], DATE_FORMAT).date()
     return dict
 
 
 def convertDateToStr(dict: Dict) -> Dict:
-    dict['date'] = dict['date'].strftime("%d/%m/%Y")
+    dict['date'] = dict['date'].strftime(DATE_FORMAT)
     return dict
 
 def completeStat(side:str, feature:str)->str:
@@ -125,7 +126,7 @@ def completeStat(side:str, feature:str)->str:
 
 
 connection = MongoDBConnection(mode='explore')
-connection.MainTable.remove({})
+connection.MainTable.delete_many({})
 #connection.RawData.remove({})
 raw_data = connection.RawData.find({}, projection={'_id': False})
 dataframe = pd.DataFrame.from_records(raw_data)
