@@ -42,6 +42,9 @@ class raw_match:
     draw_odds_nn:float
     away_odds_nn:float
     result:str
+    def adv_calc(self):
+        self.home_score_shots_ratio=float(self.home_scored/self.home_shots_on_target)
+        self.away_score_shots_ratio=float(self.away_scored/self.away_shots_on_target)
 
 @dataclass_json
 @dataclass

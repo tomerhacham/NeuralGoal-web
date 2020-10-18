@@ -23,8 +23,15 @@ class NeuralNet ():
         self.model.add(keras.layers.Dense(units=3, activation='softmax'))
         self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    def train(self,x,y,_epochs):
-        self.model.fit(x=x,y=y, batch_size=batch_size_calc.FindBatchSize(self.model), epochs=_epochs,shuffle=False)
+    def train(self,x,y,epochs,shuffle=False,validation_data=None,validation_split=0.,use_multiprocessing=False):
+       return self.model.fit  (   x=x,
+                            y=y,
+                            batch_size=batch_size_calc.FindBatchSize(self.model),
+                            epochs=epochs,
+                            shuffle=shuffle,
+                            validation_data=validation_data,
+                            validation_split=validation_split,
+                            use_multiprocessing=use_multiprocessing)
 
     def predict(self,x): #return array of prediction per the features
         #prediction=self.model.predict_proba(x)
