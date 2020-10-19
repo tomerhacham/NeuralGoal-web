@@ -1,7 +1,6 @@
 import math,os,logging
 import time
 from tensorflow import keras as keras
-from tensorflow.keras.layers import Dense
 from tensorflow.keras.callbacks import TensorBoard
 from Server.NeuralNetwork import batch_size_calc
 
@@ -12,17 +11,14 @@ class NeuralNet ():
     def __init__(self,input_dim,tf_verbose=3):
         self.input=input_dim
         self.output=int(3)
-        self.build()
-        set_tf_loglevel(tf_verbose)
-
-    #region Model Essence
-    def build(self):
-        self.model=keras.models.Sequential()
-        self.model.add(keras.layers.Dense(units=CalculateNodesInFirstLayer(self.input,self.output),input_dim=self.input, activation='relu'))
-        self.model.add(keras.layers.Dense(units=CalculateNodesInSecondLayer(self.input,self.output),activation='relu'))
+        self.model = keras.models.Sequential()
+        self.model.add(keras.layers.Dense(units=CalculateNodesInFirstLayer(self.input, self.output), input_dim=self.input,
+                                          activation='relu'))
+        self.model.add(keras.layers.Dense(units=CalculateNodesInSecondLayer(self.input, self.output), activation='relu'))
         self.model.add(keras.layers.Dense(units=3, activation='softmax'))
         self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
+    #region Model Essence
     def train(self,x,y,epochs,shuffle=False,validation_data=None,validation_split=0.,use_multiprocessing=False):
        return self.model.fit  (   x=x,
                             y=y,
@@ -34,7 +30,6 @@ class NeuralNet ():
                             use_multiprocessing=use_multiprocessing)
 
     def predict(self,x): #return array of prediction per the features
-        #prediction=self.model.predict_proba(x)
         prediction=self.model.predict(x)
         return prediction
     #endregion
