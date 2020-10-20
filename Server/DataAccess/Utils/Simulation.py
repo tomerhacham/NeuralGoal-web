@@ -3,6 +3,7 @@ from typing import Tuple
 import argparse
 import pandas as pd
 import numpy as np
+import sys; sys.path.insert(0, '../../..')
 from Server.NeuralNetwork.neuralnet import NeuralNet
 from Server.NeuralNetwork.data_preproccesor import train_preprocess,prediction_preprocess
 
