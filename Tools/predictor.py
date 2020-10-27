@@ -348,20 +348,27 @@ def preprocessData(dataframe):
                                           'away_odds_nn'])
 
     train=dataframe
-    twos = train.loc[train['result'] == '2']
-    xs = train.loc[train['result'] == 'X']
-    oversampling = train.append(twos.sample(train.result.value_counts()['1'] - train.result.value_counts()['2']),ignore_index=True, verify_integrity=True)
-    oversampling = oversampling.append(xs.sample(train.result.value_counts()['1'] - train.result.value_counts()['X']),ignore_index=True, verify_integrity=True)
-    print(oversampling.result.value_counts())
-    if ((oversampling.result.value_counts()['1'] - oversampling.result.value_counts()['2']) != 0) or (
-            (oversampling.result.value_counts()['1'] - oversampling.result.value_counts()['X']) != 0):
-        print("Imbalance dataset")
-    train = oversampling
+    train = balance_dataset(train)
     train_ds = df_to_dataset(train,Label_to_value_dict ,value_to_label_dict ,shuffle=True, batch_size=batch_size)
     #val_ds = df_to_dataset(val, shuffle=False, batch_size=batch_size)
     #test_ds = df_to_dataset(test, shuffle=False, batch_size=batch_size)
     print('Processing data -- DONE')
     return train_ds
+
+
+def balance_dataset(train):
+    twos = train.loc[train['result'] == '2']
+    xs = train.loc[train['result'] == 'X']
+    oversampling = train.append(twos.sample(train.result.value_counts()['1'] - train.result.value_counts()['2']),
+                                ignore_index=True, verify_integrity=True)
+    oversampling = oversampling.append(xs.sample(train.result.value_counts()['1'] - train.result.value_counts()['X']),
+                                       ignore_index=True, verify_integrity=True)
+    print(oversampling.result.value_counts())
+    if ((oversampling.result.value_counts()['1'] - oversampling.result.value_counts()['2']) != 0) or (
+            (oversampling.result.value_counts()['1'] - oversampling.result.value_counts()['X']) != 0):
+        print("Imbalance dataset")
+    return oversampling
+
 
 def build_train_model(train_ds):
     '''
