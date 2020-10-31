@@ -333,9 +333,7 @@ def preprocessData(dataframe):
                          'result_1': '1',
                          'result_2': '2'}
     dataframe = dataframe.loc[(dataframe['home_avg_scored'] > -1) & (dataframe['away_avg_scored'] > -1)]
-    dataframe.drop(inplace=True, columns=['league', 'date', 'round', 'home_team_name', 'away_team_name',
-    'home_team_rank', 'away_team_rank', 'home_att','away_att', 'home_def', 'away_def', 'home_mid', 'away_mid',
-    'home_odds_n', 'draw_odds_n', 'away_odds_n', 'home_odds_nn','draw_odds_nn', 'away_odds_nn'])
+    dataframe.drop(inplace=True, columns=[ 'date', 'round', 'home_odds_nn','draw_odds_nn', 'away_odds_nn'])
 
     train=dataframe
     train = balance_dataset(train)
@@ -368,29 +366,29 @@ def build_train_model(train_ds):
     '''
     encoded_features = []
     all_inputs = []
-    #encoding_layer = get_category_encoding_layer('home_team_rank', train_ds, dtype='int64')
-    #for column in ['home_team_rank', 'away_team_rank']:
-    #    _input = tf.keras.Input(shape=(1,), name=column, dtype='int64')
-    #    encoded_features.append(encoding_layer(_input))
-    #    all_inputs.append(_input)
+    encoding_layer = get_category_encoding_layer('home_team_rank', train_ds, dtype='int64')
+    for column in ['home_team_rank', 'away_team_rank']:
+        _input = tf.keras.Input(shape=(1,), name=column, dtype='int64')
+        encoded_features.append(encoding_layer(_input))
+        all_inputs.append(_input)
 
-    #league_col = tf.keras.Input(shape=(1,), name='league', dtype='string')
-    #encoding_layer = get_category_encoding_layer('league', train_ds, dtype='string')
-    #encoded_features.append(encoding_layer(league_col))
-    #all_inputs.append(league_col)
+    league_col = tf.keras.Input(shape=(1,), name='league', dtype='string')
+    encoding_layer = get_category_encoding_layer('league', train_ds, dtype='string')
+    encoded_features.append(encoding_layer(league_col))
+    all_inputs.append(league_col)
 
-    #encoding_layer = get_category_encoding_layer('home_team_name', train_ds, dtype='string')
-    #for column in ['home_team_name', 'away_team_name']:
-    #    _input = tf.keras.Input(shape=(1,), name=column, dtype='string')
-    #    encoded_features.append(encoding_layer(_input))
-    #    all_inputs.append(_input)
+    encoding_layer = get_category_encoding_layer('home_team_name', train_ds, dtype='string')
+    for column in ['home_team_name', 'away_team_name']:
+        _input = tf.keras.Input(shape=(1,), name=column, dtype='string')
+        encoded_features.append(encoding_layer(_input))
+        all_inputs.append(_input)
 
-    #for attribute in ['att', 'mid', 'def']:
-    #    encoding_layer = get_normalization_layer(f'home_{attribute}', train_ds)
-    #    for team in ['home', 'away']:
-    #        _input = tf.keras.Input(shape=(1,), name=f'{team}_{attribute}')
-    #        encoded_features.append(encoding_layer(_input))
-    #        all_inputs.append(_input)
+    for attribute in ['att', 'mid', 'def']:
+        encoding_layer = get_normalization_layer(f'home_{attribute}', train_ds)
+        for team in ['home', 'away']:
+            _input = tf.keras.Input(shape=(1,), name=f'{team}_{attribute}')
+            encoded_features.append(encoding_layer(_input))
+            all_inputs.append(_input)
 
     #for attribute in ['scored', 'received', 'shots_on_target', 'shots']:
     for attribute in ['scored', 'received']:
@@ -412,7 +410,6 @@ def build_train_model(train_ds):
         loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True),
         metrics=['categorical_crossentropy',"categorical_accuracy",'accuracy'])
 
-    #model.fit(train_ds, epochs=30, use_multiprocessing=True)
     print('Building and compiling model -- DONE')
     return model
 
